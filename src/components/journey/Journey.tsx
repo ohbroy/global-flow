@@ -140,19 +140,25 @@ export function Journey() {
         }
 
         // camera-like move: push in while arriving, drift + pull away while leaving
-        tl.fromTo(
-          media,
-          { scale: 1.32, xPercent: -scene.drift, yPercent: 4, filter: "blur(8px)" },
-          {
-            scale: 1.04,
-            xPercent: scene.drift,
-            yPercent: 0,
-            filter: "blur(0px)",
-            duration: 1.3,
-            immediateRender: i === 0,
-          },
-          at(i - 0.55),
-        );
+        if (i === 0) {
+          // the opening frame is already "arrived" — it only drifts and departs
+          gsap.set(media, { scale: 1.08, xPercent: -scene.drift, yPercent: 0, filter: "blur(0px)" });
+          tl.to(media, { scale: 1.02, xPercent: scene.drift, duration: 0.5 }, 0);
+        } else {
+          tl.fromTo(
+            media,
+            { scale: 1.32, xPercent: -scene.drift, yPercent: 4, filter: "blur(8px)" },
+            {
+              scale: 1.04,
+              xPercent: scene.drift,
+              yPercent: 0,
+              filter: "blur(0px)",
+              duration: 1.3,
+              immediateRender: false,
+            },
+            at(i - 0.55),
+          );
+        }
         tl.to(
           media,
           { scale: 1.22, yPercent: -5, filter: "blur(7px)", duration: 0.55 },
@@ -160,12 +166,16 @@ export function Journey() {
         );
 
         // text enters late and leaves early so it never collides with the cut
-        tl.fromTo(
-          content,
-          { opacity: 0, y: 70 },
-          { opacity: 1, y: 0, duration: 0.35, ease: "power2.out", immediateRender: i === 0 },
-          at(i - 0.2),
-        );
+        if (i === 0) {
+          gsap.set(content, { opacity: 1, y: 0 });
+        } else {
+          tl.fromTo(
+            content,
+            { opacity: 0, y: 70 },
+            { opacity: 1, y: 0, duration: 0.35, ease: "power2.out", immediateRender: false },
+            at(i - 0.2),
+          );
+        }
         tl.to(content, { opacity: 0, y: -70, duration: 0.3 }, at(i + 0.45));
       });
 
