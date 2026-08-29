@@ -132,11 +132,13 @@ export function Journey() {
         const layer = layers[i];
         const media = medias[i];
         const content = contents[i];
+        if (!layer || !media || !content) return;
         const at = (t: number) => Math.max(0, t);
 
-        if (i > 0) {
+        const prevLayer = layers[i - 1];
+        if (i > 0 && prevLayer) {
           tl.to(layer, { opacity: 1, duration: 0.5 }, at(i - 0.5));
-          tl.to(layers[i - 1], { opacity: 0, duration: 0.35 }, at(i - 0.3));
+          tl.to(prevLayer, { opacity: 0, duration: 0.35 }, at(i - 0.3));
         }
 
         // camera-like move: push in while arriving, drift + pull away while leaving
