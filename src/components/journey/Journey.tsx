@@ -108,10 +108,26 @@ export function Journey() {
     gsap.registerPlugin(ScrollTrigger);
 
     const ctx = gsap.context(() => {
-      const layers = gsap.utils.toArray<HTMLElement>("[data-layer]");
-      const medias = gsap.utils.toArray<HTMLElement>("[data-media]");
-      const contents = gsap.utils.toArray<HTMLElement>("[data-content]");
+      // Collect the scene elements scoped to this component and drop anything
+      // missing so GSAP can never receive an undefined target.
+      const layers = gsap.utils
+        .toArray<HTMLElement>("[data-layer]", wrap)
+        .filter((el): el is HTMLElement => el instanceof HTMLElement);
+      const medias = gsap.utils
+        .toArray<HTMLElement>("[data-media]", wrap)
+        .filter((el): el is HTMLElement => el instanceof HTMLElement);
+      const contents = gsap.utils
+        .toArray<HTMLElement>("[data-content]", wrap)
+        .filter((el): el is HTMLElement => el instanceof HTMLElement);
       const cue = wrap.querySelector<HTMLElement>("[data-cue]");
+
+      // Bail out entirely if the DOM doesn't match the scene list — running a
+      // partial timeline would animate the wrong elements.
+      const ready =
+        layers.length === SCENES.length &&
+        medias.length === SCENES.length &&
+        contents.length === SCENES.length;
+      if (!ready) return;
 
       gsap.set(layers, { opacity: (i: number) => (i === 0 ? 1 : 0) });
       gsap.set(contents.slice(1), { opacity: 0, y: 70 });
