@@ -172,35 +172,52 @@ export function Journey() {
 
         const prevLayer = layers[i - 1];
         if (i > 0 && prevLayer) {
-          tl.to(layer, { opacity: 1, duration: 0.5 }, at(i - 0.5));
-          tl.to(prevLayer, { opacity: 0, duration: 0.35 }, at(i - 0.3));
+          // long, overlapping dissolve — no hard cut between scenes
+          tl.to(layer, { opacity: 1, duration: 0.75, ease: "power1.inOut" }, at(i - 0.7));
+          tl.to(prevLayer, { opacity: 0, duration: 0.7, ease: "power1.inOut" }, at(i - 0.55));
         }
 
         // camera-like move: push in while arriving, drift + pull away while leaving
         if (i === 0) {
           // the opening frame is already "arrived" — it only drifts and departs
-          gsap.set(media, { scale: 1.08, xPercent: -scene.drift, yPercent: 0, filter: "blur(0px)" });
-          tl.to(media, { scale: 1.02, xPercent: scene.drift, duration: 0.5 }, 0);
+          gsap.set(media, {
+            scale: 1.06,
+            xPercent: -scene.drift,
+            yPercent: 0,
+            filter: "blur(0px)",
+          });
+          tl.to(media, { scale: 1.02, xPercent: scene.drift, duration: 0.6 }, 0);
         } else {
           tl.fromTo(
             media,
-            { scale: 1.32, xPercent: -scene.drift, yPercent: 4, filter: "blur(8px)" },
+            { scale: 1.24, xPercent: -scene.drift, yPercent: 3, filter: "blur(6px)" },
             {
-              scale: 1.04,
+              scale: 1.03,
               xPercent: scene.drift,
               yPercent: 0,
               filter: "blur(0px)",
-              duration: 1.3,
+              duration: 1.5,
+              ease: "power1.out",
               immediateRender: false,
             },
-            at(i - 0.55),
+            at(i - 0.75),
           );
         }
-        tl.to(
-          media,
-          { scale: 1.22, yPercent: -5, filter: "blur(7px)", duration: 0.55 },
-          at(i + 0.5),
-        );
+
+        if (scene.exit === "through") {
+          // fly the camera forward, out through the cockpit windshield
+          tl.to(
+            media,
+            { scale: 2.6, yPercent: -6, filter: "blur(10px)", duration: 0.85, ease: "power2.in" },
+            at(i + 0.32),
+          );
+        } else {
+          tl.to(
+            media,
+            { scale: 1.18, yPercent: -4, filter: "blur(6px)", duration: 0.8, ease: "power1.in" },
+            at(i + 0.45),
+          );
+        }
 
         // text enters late and leaves early so it never collides with the cut
         if (i === 0) {
@@ -208,12 +225,24 @@ export function Journey() {
         } else {
           tl.fromTo(
             content,
-            { opacity: 0, y: 70 },
-            { opacity: 1, y: 0, duration: 0.35, ease: "power2.out", immediateRender: false },
-            at(i - 0.2),
+            { opacity: 0, y: 60, filter: "blur(6px)" },
+            {
+              opacity: 1,
+              y: 0,
+              filter: "blur(0px)",
+              duration: 0.5,
+              ease: "power2.out",
+              immediateRender: false,
+            },
+            at(i - 0.38),
           );
         }
-        tl.to(content, { opacity: 0, y: -70, duration: 0.3 }, at(i + 0.45));
+        tl.to(
+          content,
+          { opacity: 0, y: -60, filter: "blur(4px)", duration: 0.4, ease: "power2.in" },
+          at(i + 0.42),
+        );
+
       });
 
       if (cue) tl.to(cue, { opacity: 0, y: -20, duration: 0.25 }, 0.05);
