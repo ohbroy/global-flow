@@ -9,6 +9,8 @@ import portCranes from "@/assets/port-cranes.jpg";
 import landTruck from "@/assets/land-truck.jpg";
 import deliveryWarehouse from "@/assets/delivery-warehouse.jpg";
 import globeNetwork from "@/assets/globe-network.jpg";
+import cockpitInterior from "@/assets/cockpit-interior.jpg";
+
 import { RouteOverlay, RouteLabels } from "./RouteOverlay";
 
 type Scene = {
