@@ -21,9 +21,25 @@ type Scene = {
   align: "left" | "center";
   /** how strongly the media drifts sideways while its scene is on screen */
   drift: number;
+  /** "through" flies the camera out through the frame instead of pulling back */
+  exit?: "through";
 };
 
 const SCENES: Scene[] = [
+  {
+    id: "cockpit",
+    image: cockpitInterior,
+    alt: "View from inside a cargo aircraft cockpit at sunrise, instruments lit, clouds beyond the windshield",
+    eyebrow: "Flight SKY-01 / Departure",
+    title: ["Skylink", "Global."],
+    body: [
+      "Freight forwarding by air, sea and road.",
+      "The journey starts on the flight deck — scroll to leave the cockpit.",
+    ],
+    align: "center",
+    drift: 0,
+    exit: "through",
+  },
   {
     id: "air",
     image: airAircraft,
@@ -34,6 +50,7 @@ const SCENES: Scene[] = [
     align: "center",
     drift: -3,
   },
+
   {
     id: "sky",
     image: skyDescent,
